@@ -20,7 +20,7 @@
                 <button type="submit" class="submit-btn">Ajouter</button>
             </form>
         </div>
-        <span v-for="(error, key) in errors" :key="key" class="errors">{{ error }}</span>
+        <span class="errors">{{ error }}</span>
     </div>
 </template>
 
@@ -41,10 +41,10 @@ const manager = ref('');
 const hours = ref(null);
 const todos = ref([]);
 const count = ref(0);
-const errors = ref([]);
+const error = ref("");
 
 function addTodo() {
-    errors.value = [];
+    error.value = "";
 
     const managerTaskCount = todos.value.reduce((count, it) => {
         if(toRaw(it).manager === manager.value)
@@ -53,19 +53,19 @@ function addTodo() {
 
     const managerHoursCount = todos.value.reduce((count, it) => {
         if(toRaw(it).manager === manager.value)
-            return count + it.hours;
+            return count + toRaw(it).hours;
     }, hours.value || 0);
 
     if(!label.value.length || !manager.value.length || !hours.value) {
-        errors.value.push("Veuillez saisir tout les champs \n");
+        error.value = "Veuillez saisir tout les champs";
     } else if(managerTaskCount >= 3) {
-        errors.value.push("Ce manager a dejà 3 tâches \n");
+        error.value = "Ce manager a dejà 3 tâches";
     } else if(managerHoursCount > 10) {
-        errors.value.push("Le nombre d'heures dépasse 10h pour ce manager \n");
+        error.value = "Le nombre d'heures dépasse 10h pour ce manager";
     } else {
         todos.value.push({label: label.value, manager: manager.value, hours: hours.value});
         count.value++;
-        errors.value = [];
+        error.value = "";
     }
 }
 
